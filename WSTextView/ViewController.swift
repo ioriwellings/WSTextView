@@ -23,7 +23,7 @@ class ViewController: UIViewController, UITextViewDelegate, UIImagePickerControl
         self.automaticallyAdjustsScrollViewInsets = false
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "kbFrameWillChange:", name: UIKeyboardWillChangeFrameNotification, object: nil)
         self.contentView.delegate = self
-        self.contentView.maxInsertImageCount = 1
+        self.contentView.maxInsertImageCount = 2
         self.contentView.scrollEnabled = false
         
     }
