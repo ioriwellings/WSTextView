@@ -187,7 +187,7 @@ extension WSTextView {
         self.attributedText = originalAttr
         
         //让光标回到下一个位置
-        range.location++
+        range.location += 1
         range.length = 0
         selectedRange = range
         

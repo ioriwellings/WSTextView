@@ -62,6 +62,7 @@ class ViewController: UIViewController, UITextViewDelegate, UIImagePickerControl
     }
     
     func textViewDidChange(textView: UITextView) {
+        //让输出框的大小根据内容的大小变化
         self.contentViewHeight.constant = contentView.textFrame.height
         self.toolViewHeight.constant = 44 + (contentView.textFrame.height - 34)
     }
