@@ -25,6 +25,7 @@ class ViewController: UIViewController, UITextViewDelegate, UIImagePickerControl
         self.contentView.delegate = self
         self.contentView.maxInsertImageCount = 2
         self.contentView.scrollEnabled = false
+        self.contentView.cursorOffsetX = 10
         
     }
     deinit{

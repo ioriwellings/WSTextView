@@ -35,6 +35,16 @@ class WSTextView: UITextView {
             self.layer.masksToBounds = true
         }
     }
+    //光标在水平位置的偏移距离
+    var cursorOffsetX : CGFloat = 0 {
+        didSet{
+            let leadingMargin: CGFloat = 5 + cursorOffsetX
+            let topMargin: CGFloat = 8
+            placeHolderLbl.frame.origin = CGPoint(x: leadingMargin, y: topMargin)
+            placeHolderLbl.frame.size = sizeOfText(placeHolderText!, font: placeHolderLbl.font, maxSize: CGSizeMake(self.frame.width - leadingMargin * 2, CGFloat(MAXFLOAT)))
+            textContainerInset = UIEdgeInsetsMake(textContainerInset.top, textContainerInset.left + cursorOffsetX, textContainerInset.bottom, textContainerInset.right + cursorOffsetX)
+        }
+    }
     
     // 显示的文字
     override var text: String? {
@@ -89,7 +99,7 @@ class WSTextView: UITextView {
         placeHolderText = "placeHolderText"
         addSubview(placeHolderLbl)
         let topMargin: CGFloat = 8
-        let leadingMargin: CGFloat = 5
+        let leadingMargin: CGFloat = 5 + cursorOffsetX
         placeHolderLbl.frame.origin = CGPoint(x: leadingMargin, y: topMargin)
         placeHolderLbl.frame.size = sizeOfText(placeHolderText!, font: placeHolderLbl.font, maxSize: CGSizeMake(self.frame.width - leadingMargin * 2, CGFloat(MAXFLOAT)))
         self.font = UIFont.systemFontOfSize(15)
