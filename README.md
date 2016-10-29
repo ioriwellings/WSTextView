@@ -5,7 +5,6 @@ UITextview 的子类，可以根据输入的文字动态变化大小，插入图
 
 ![](http://7xq8l3.com1.z0.glb.clouddn.com/textView.gif)
 # 用法
-
  * 首先通过storyboard拖控件，然后关联类，在storyboard中可以设置CornerRadius、placeHolderText等
  * 关联类之后设置属性和代理
  * 设置最大的可添加的图片数：self.textView.maxInsertImageCount = 2
@@ -21,5 +20,9 @@ UITextview 的子类，可以根据输入的文字动态变化大小，插入图
     
  	
  ```
+ 
+#版本
+ 
+* 更新到swift 3.0
  
 

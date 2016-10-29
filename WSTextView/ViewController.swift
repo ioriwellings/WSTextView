@@ -2,8 +2,8 @@
 //  ViewController.swift
 //  WSTextView
 //
-//  Created by WackoSix on 3/8/16.
-//  Copyright © 2016 www.wackosix.cn. All rights reserved.
+//  Created by OneZens on 3/8/16.
+//  Copyright © 2016 www.onezen.cc. All rights reserved.
 //
 
 import UIKit
@@ -21,48 +21,48 @@ class ViewController: UIViewController, UITextViewDelegate, UIImagePickerControl
         super.viewDidLoad()
         
         self.automaticallyAdjustsScrollViewInsets = false
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "kbFrameWillChange:", name: UIKeyboardWillChangeFrameNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(ViewController.kbFrameWillChange(_:)), name: NSNotification.Name.UIKeyboardWillChangeFrame, object: nil)
         self.contentView.delegate = self
         self.contentView.maxInsertImageCount = 2
-        self.contentView.scrollEnabled = false
+        self.contentView.isScrollEnabled = false
         self.contentView.cursorOffsetX = 10
         
     }
     deinit{
         
-        NSNotificationCenter.defaultCenter().removeObserver(self)
+        NotificationCenter.default.removeObserver(self)
     }
 
-    @IBAction func photoBtnClick(sender: AnyObject) {
+    @IBAction func photoBtnClick(_ sender: AnyObject) {
         
         let imageVC = UIImagePickerController()
         imageVC.delegate = self
-        self.presentViewController(imageVC, animated: true, completion: nil)
+        self.present(imageVC, animated: true, completion: nil)
     }
 
-    @IBAction func sendBtnClick(sender: AnyObject) {
+    @IBAction func sendBtnClick(_ sender: AnyObject) {
     }
     
     
-    func imagePickerController(picker: UIImagePickerController, didFinishPickingImage image: UIImage, editingInfo: [String : AnyObject]?) {
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingImage image: UIImage, editingInfo: [String : AnyObject]?) {
         
         self.contentView.insertImage(image)
-        picker.dismissViewControllerAnimated(true, completion: nil)
+        picker.dismiss(animated: true, completion: nil)
     }
     
     // MARK: - private method
-    @objc private func kbFrameWillChange(noti: NSNotification) {
+    @objc fileprivate func kbFrameWillChange(_ noti: Notification) {
         
         
-        let kbY = (noti.userInfo!["UIKeyboardFrameEndUserInfoKey"] as! NSValue).CGRectValue().origin.y
+        let kbY = ((noti as NSNotification).userInfo!["UIKeyboardFrameEndUserInfoKey"] as! NSValue).cgRectValue.origin.y
         self.toolViewBottom.constant = self.view.frame.height - kbY
-        UIView.animateWithDuration(0.25) { () -> Void in
+        UIView.animate(withDuration: 0.25, animations: { () -> Void in
             self.view.layoutIfNeeded()
-        }
+        }) 
         
     }
     
-    func textViewDidChange(textView: UITextView) {
+    func textViewDidChange(_ textView: UITextView) {
         //让输出框的大小根据内容的大小变化
         self.contentViewHeight.constant = contentView.textFrame.height
         self.toolViewHeight.constant = 44 + (contentView.textFrame.height - 34)

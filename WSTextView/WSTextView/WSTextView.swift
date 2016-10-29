@@ -2,16 +2,16 @@
 //  WSTextView.swift
 //  Weibo
 //
-//  Created by WackoSix on 16/1/27.
-//  Copyright © 2016年 WackoSix. All rights reserved.
+//  Created by OneZens on 16/1/27.
+//  Copyright © 2016年 OneZens. All rights reserved.
 //
 
 import UIKit
 
 /// 计算字体的size
-func sizeOfText(text: String, font: UIFont, maxSize: CGSize) -> CGSize {
+func sizeOfText(_ text: String, font: UIFont, maxSize: CGSize) -> CGSize {
     
-    return ((text as NSString)).boundingRectWithSize(maxSize, options: NSStringDrawingOptions.UsesLineFragmentOrigin, attributes: [NSFontAttributeName: font], context: nil).size
+    return ((text as NSString)).boundingRect(with: maxSize, options: NSStringDrawingOptions.usesLineFragmentOrigin, attributes: [NSFontAttributeName: font], context: nil).size
 }
 
 @IBDesignable
@@ -41,7 +41,7 @@ class WSTextView: UITextView {
             let leadingMargin: CGFloat = 5 + cursorOffsetX
             let topMargin: CGFloat = 8
             placeHolderLbl.frame.origin = CGPoint(x: leadingMargin, y: topMargin)
-            placeHolderLbl.frame.size = sizeOfText(placeHolderText!, font: placeHolderLbl.font, maxSize: CGSizeMake(self.frame.width - leadingMargin * 2, CGFloat(MAXFLOAT)))
+            placeHolderLbl.frame.size = sizeOfText(placeHolderText!, font: placeHolderLbl.font, maxSize: CGSize(width: self.frame.width - leadingMargin * 2, height: CGFloat(MAXFLOAT)))
             textContainerInset = UIEdgeInsetsMake(textContainerInset.top, textContainerInset.left + cursorOffsetX, textContainerInset.bottom, textContainerInset.right + cursorOffsetX)
         }
     }
@@ -51,7 +51,7 @@ class WSTextView: UITextView {
         
         didSet {
             
-            placeHolderLbl.hidden = self.hasText()
+            placeHolderLbl.isHidden = self.hasText
         }
     }
     
@@ -66,7 +66,7 @@ class WSTextView: UITextView {
     
     //最大能够添加的图片个数
     var maxInsertImageCount = 0
-    var textFrame: CGRect = CGRectZero
+    var textFrame: CGRect = CGRect.zero
     
     // MARK: - init
     override init(frame: CGRect, textContainer: NSTextContainer?) {
@@ -79,7 +79,7 @@ class WSTextView: UITextView {
         setupUI()
     }
     
-    override func insertText(text: String) {
+    override func insertText(_ text: String) {
         
         super.insertText(text)
         delegate?.textViewDidChange?(self)
@@ -91,24 +91,24 @@ class WSTextView: UITextView {
     }
     
     // MARK: - private method
-    private func setupUI() {
+    fileprivate func setupUI() {
         
         // 添加通知，监听当前的文字编辑情况
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "valueChange", name: UITextViewTextDidChangeNotification, object: self)
+        NotificationCenter.default.addObserver(self, selector: #selector(WSTextView.valueChange), name: NSNotification.Name.UITextViewTextDidChange, object: self)
         
         placeHolderText = "placeHolderText"
         addSubview(placeHolderLbl)
         let topMargin: CGFloat = 8
         let leadingMargin: CGFloat = 5 + cursorOffsetX
         placeHolderLbl.frame.origin = CGPoint(x: leadingMargin, y: topMargin)
-        placeHolderLbl.frame.size = sizeOfText(placeHolderText!, font: placeHolderLbl.font, maxSize: CGSizeMake(self.frame.width - leadingMargin * 2, CGFloat(MAXFLOAT)))
-        self.font = UIFont.systemFontOfSize(15)
+        placeHolderLbl.frame.size = sizeOfText(placeHolderText!, font: placeHolderLbl.font, maxSize: CGSize(width: self.frame.width - leadingMargin * 2, height: CGFloat(MAXFLOAT)))
+        self.font = UIFont.systemFont(ofSize: 15)
         
     }
     
-    @objc private func valueChange() {
+    @objc fileprivate func valueChange() {
         
-        placeHolderLbl.hidden = self.hasText()
+        placeHolderLbl.isHidden = self.hasText
         let fixWidth = frame.width
         let newSize = sizeThatFits(CGSize(width: fixWidth, height: CGFloat(MAXFLOAT)))
         let newFrame = CGRect(origin: frame.origin, size: CGSize(width: fixWidth, height: newSize.height))
@@ -117,15 +117,15 @@ class WSTextView: UITextView {
     }
     deinit {
         
-        NSNotificationCenter.defaultCenter().removeObserver(self)
+        NotificationCenter.default.removeObserver(self)
     }
     
     // MARK: - lazy loading
     
-    private lazy var placeHolderLbl: UILabel = {
+    fileprivate lazy var placeHolderLbl: UILabel = {
         
         let lbl = UILabel()
-        lbl.textColor = UIColor.grayColor()
+        lbl.textColor = UIColor.gray
         lbl.numberOfLines = 0
         return lbl
     }()
@@ -134,12 +134,12 @@ class WSTextView: UITextView {
         
         var images = [UIImage]()
         
-        self.attributedText.enumerateAttributesInRange(NSMakeRange(0, self.attributedText.length), options: .Reverse) { (attri, range, _) -> Void in
+        self.attributedText.enumerateAttributes(in: NSMakeRange(0, self.attributedText.length), options: .reverse) { (attri, range, _) -> Void in
             
             if attri["NSAttachment"] != nil {
                 
                 let attachment = attri["NSAttachment"] as! WSTextAttachment
-                if attachment.attachmentType == .Image {
+                if attachment.attachmentType == .image {
                     
                     images.append(attachment.image!)
                 }
@@ -157,39 +157,39 @@ extension WSTextView {
     ///  插入一个表情，图片可以是一个自定义表情，按当前的文字大小为尺寸来显示
     ///
     ///  - parameter image:表情图片
-    func insertEmotionImage(image: UIImage) {
+    func insertEmotionImage(_ image: UIImage) {
         
         let lineWidth = (self.font?.lineHeight)!
-        insertImage(image, imageSize: CGSizeMake(lineWidth, lineWidth), isEmotion: true)
+        insertImage(image, imageSize: CGSize(width: lineWidth, height: lineWidth), isEmotion: true)
     }
     
     ///  添加一张图片，图片大小按宽度的96%来等比缩放（96%，图片在中间😂）
     ///
     ///  - parameter image: 要添加的图片
-    func insertImage(image: UIImage) {
+    func insertImage(_ image: UIImage) {
         
         if self.imageAttachement.count >= maxInsertImageCount {
             
             return
         }
         let width = self.bounds.width * 0.96
-        self.insertImage(image, imageSize: CGSizeMake(width, (image.size.height / image.size.width) * width))
+        self.insertImage(image, imageSize: CGSize(width: width, height: (image.size.height / image.size.width) * width))
     }
     
-    private func insertImage(image: UIImage, imageSize: CGSize, isEmotion: Bool = false) {
+    fileprivate func insertImage(_ image: UIImage, imageSize: CGSize, isEmotion: Bool = false) {
         
         let attachement = WSTextAttachment()
-        attachement.attachmentType = isEmotion ? .Emotion : .Image
+        attachement.attachmentType = isEmotion ? .emotion : .image
         attachement.image = image
         // let lineWidth = (self.font?.lineHeight)!
-        attachement.bounds = CGRect(origin: CGPointZero, size: imageSize)
+        attachement.bounds = CGRect(origin: CGPoint.zero, size: imageSize)
         
         //获取原始的富文本
         let originalAttr = NSMutableAttributedString(attributedString: self.attributedText)
         
         //后去当前光标的位置，并且替换文本
         var range = self.selectedRange
-        originalAttr.replaceCharactersInRange(range, withAttributedString: NSAttributedString(attachment: attachement))
+        originalAttr.replaceCharacters(in: range, with: NSAttributedString(attachment: attachement))
         
         //保持原先的文字的大小，没有这句话图片文字会在下次输入的时候变小
         originalAttr.addAttribute(NSFontAttributeName, value: self.font!, range: NSMakeRange(0, originalAttr.length))
@@ -202,7 +202,7 @@ extension WSTextView {
         selectedRange = range
         
         //发送通知和代理
-        NSNotificationCenter.defaultCenter().postNotificationName(UITextViewTextDidChangeNotification, object: self)
+        NotificationCenter.default.post(name: NSNotification.Name.UITextViewTextDidChange, object: self)
         delegate?.textViewDidChange?(self)
         
         if !isEmotion {
@@ -217,15 +217,15 @@ extension WSTextView {
 /************************** NSTextAttachment *******************************/
 
 enum WSTextAttachmentType: Int {
-    case Default    =   0
-    case Image      =   1
-    case Emotion    =   2
+    case `default`    =   0
+    case image      =   1
+    case emotion    =   2
 }
 
 
 class WSTextAttachment: NSTextAttachment {
     
-    var attachmentType: WSTextAttachmentType = .Default
+    var attachmentType: WSTextAttachmentType = .default
     
 }
 
